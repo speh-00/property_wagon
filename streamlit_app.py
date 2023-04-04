@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 import numpy as np
-# from streamlit_folium import folium_static
+from streamlit_folium import folium_static
 import folium
 
 st.set_page_config(layout="wide")
