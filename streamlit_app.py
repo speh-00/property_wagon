@@ -31,36 +31,36 @@ if submit_button:
   st.sidebar.write(hawker)
   st.sidebar.write(school)
 
-# df = pd.DataFrame(np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4], columns=['lat', 'lon'])
-# st.map(df) 
+  # df = pd.DataFrame(np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4], columns=['lat', 'lon'])
+  # st.map(df) 
   
-recent_tnx = pd.read_csv('data/recent_tnx.csv')
-recent_tnx = recent_tnx[["Latitude", "Longitude", "flat_type", "storey_range", "remaining_lease_yr", "resale_price"]]
+  recent_tnx = pd.read_csv('data/recent_tnx.csv')
+  recent_tnx = recent_tnx[["Latitude", "Longitude", "flat_type", "storey_range", "remaining_lease_yr", "resale_price"]]
 
-pred_price = "600,000"
+  pred_price = "600,000"
 
-def getcoordinates(address1):
-    req = requests.get('https://developers.onemap.sg/commonapi/search?searchVal='+address1+'&returnGeom=Y&getAddrDetails=Y&pageNum=1')
-    resultsdict = eval(req.text)
-    if len(resultsdict['results'])>0:
-        return resultsdict['results'][0]['LATITUDE'], resultsdict['results'][0]['LONGITUDE']
-    else:
-        pass
-    
-address_lat = getcoordinates(address)[0]
-address_long = getcoordinates(address)[1]
+  def getcoordinates(address1):
+      req = requests.get('https://developers.onemap.sg/commonapi/search?searchVal='+address1+'&returnGeom=Y&getAddrDetails=Y&pageNum=1')
+      resultsdict = eval(req.text)
+      if len(resultsdict['results'])>0:
+          return resultsdict['results'][0]['LATITUDE'], resultsdict['results'][0]['LONGITUDE']
+      else:
+          pass
 
-map = folium.Map(location=[address_lat, address_long], zoom_start=17, control_scale=True)
+  address_lat = getcoordinates(address)[0]
+  address_long = getcoordinates(address)[1]
 
-for index, location_info in recent_tnx.iterrows():
-    folium.CircleMarker(location=[location_info["Latitude"],location_info["Longitude"]],
-                         radius=5,
-                         color="crimson", 
-                         fill=True,
-                         fill_color="crimson",
-                         popup=location_info[["flat_type", "storey_range", "resale_price"]]).add_to(map)
-    
-folium.Marker(location=[address_lat, address_long], popup= [address1, flat_type1, storey_range1, pred_price]).add_to(map)
+  map = folium.Map(location=[address_lat, address_long], zoom_start=17, control_scale=True)
 
-map
+  for index, location_info in recent_tnx.iterrows():
+      folium.CircleMarker(location=[location_info["Latitude"],location_info["Longitude"]],
+                           radius=5,
+                           color="crimson", 
+                           fill=True,
+                           fill_color="crimson",
+                           popup=location_info[["flat_type", "storey_range", "resale_price"]]).add_to(map)
+
+  folium.Marker(location=[address_lat, address_long], popup= [address1, flat_type1, storey_range1, pred_price]).add_to(map)
+
+  map
   
