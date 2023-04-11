@@ -4,6 +4,7 @@ import requests
 import numpy as np
 from streamlit_folium import st_folium, folium_static
 import folium
+from geopy.distance import geodesic
 
 st.set_page_config(layout="wide")
 st.title('Property Wagon - HDB resale prices')
@@ -23,6 +24,7 @@ submit_button = st.sidebar.button('SUBMIT')
 # LOAD DATA
 recent_tnx = pd.read_csv('data/recent_tnx.csv')
 medium_px = pd.read_csv('data/hdb_median_prices_by_town.csv')
+amenities = pd.read_csv("data/amenities_list.csv")
 
 def getcoordinates(address):
     req = requests.get('https://developers.onemap.sg/commonapi/search?searchVal='+address+'&returnGeom=Y&getAddrDetails=Y&pageNum=1')
@@ -62,13 +64,24 @@ def main():
         st_map = folium_static(map, width=1400, height=700)
         st.write('Boundaries based on Master Plan 2014 Planning Area Boundary (No Sea)')
 
-        # WIP : AMENITIES WITHIN 2KM
-        st.header('wip : Nearby Amenities')
-        st.write(recent_tnx.head())
-        # show amenities within 2 km
-        # add column to calculate distance of amentities from address
-        # df_amenities = df_distance[df_distance['distance'] =< 2], sort from smallest distance
-        # st.write(df_amenities)
+        # AMENITIES WITHIN 0.6 KM
+        # Iterate over each row of the DataFrame and calculate the distance
+        for index, row in amenities.iterrows():
+            curr_lat = row['Latitude']
+            curr_lon = row['Longitude']
+            curr_pos = (curr_lat, curr_lon)
+            ref_pos = (address_lat, address_long)
+            distance = geodesic(curr_pos, ref_pos).km
+
+            # Add the distance to the DataFrame as a new column
+            amenities.at[index, 'Distance'] = distance
+
+            # Create DataFrame where distance is less than 0.6 km
+            nearby_amenities = amenities[amenities['Distance']<0.6]
+            amenity=nearby_amenities[['Amenity','Type']].reset_index(drop=True)
+                
+        st.header('Nearby Amenities')
+        st.write(amenity)
 
     else:
         # DISPLAY MAP default
