@@ -38,7 +38,7 @@ def predict(address):
     # ENTER THE API FOR PREDICTED PRICE
 
     #  https://property-joycetoh-dpqqbevshq-as.a.run.app/predict?town=YISHUN&flat_type=EXECUTIVE&storey_range=01%20TO%2003&floor_area_sqm=164.0&flat_model=Apartment&lease_commence_date=1992&GDP=130024.7&HDB_resale_vol=2190.732478
-    pred_px=600000
+    pred_px='WIP'
     return pred_px
 
 def main():
